@@ -11,6 +11,35 @@ import AVFoundation
 
 class DepthReader {
     
+    static func depthData(imageName: String, imageExtension: String) -> AVDepthData? {
+        
+        guard let fileURL = Bundle.main.url(forResource: imageName, withExtension: imageExtension) as CFURL? else {
+            assertionFailure("Unable to locate image file")
+            return nil
+        }
+        
+        guard let source = CGImageSourceCreateWithURL(fileURL, nil) else {
+            assertionFailure("Unable to create source")
+            return nil
+        }
+        
+        guard let auxDataInfo = CGImageSourceCopyAuxiliaryDataInfoAtIndex(source, 0,
+                                                                          kCGImageAuxiliaryDataTypeDisparity) as? [AnyHashable : Any] else {
+                                                                            assertionFailure("Unable to get Auxiliary Data Info")
+                                                                            return nil
+        }
+        
+        var depthData: AVDepthData
+        
+        do {
+            depthData = try AVDepthData(fromDictionaryRepresentation: auxDataInfo)
+            return depthData
+        } catch {
+            assertionFailure(error.localizedDescription)
+            return nil
+        }
+    }
+    
     static func depthDataMap(imageName: String, imageExtension: String) -> CVPixelBuffer? {
         
         guard let fileURL = Bundle.main.url(forResource: imageName, withExtension: imageExtension) as CFURL? else {
