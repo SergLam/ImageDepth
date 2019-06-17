@@ -1,0 +1,9 @@
+# Uncomment the next line to define a global platform for your project
+platform :ios, '11.0'
+
+target 'image-depth-z-buffer' do
+  use_frameworks!
+
+  # Pods for image-depth-z-buffer
+    pod 'SnapKit', '~> 5.0.0'
+end
