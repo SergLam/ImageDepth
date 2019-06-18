@@ -22,6 +22,9 @@ class MainVC: UIViewController {
     private let testImageName3 = "original_image"
     private let testImageExt3 = "jpg"
     
+    private let bufferImageName = "zbuffer"
+    private let bufferImageExt = "jpg"
+    
     let contentView = MainView()
     
     override func loadView() {
@@ -42,7 +45,7 @@ extension MainVC: MainViewDelegate {
     
     func didTapApplyButton() {
         
-        let _ = addDepthToImage(imageName: testImageName1, extension: testImageExt1)
+        let _ = addDepthToImage(imageName: testImageName3, imageExt: testImageExt3)
         guard let url = Bundle.main.url(forResource: testImageName1, withExtension: testImageExt1) else {
             assertionFailure("Unable to locate image file")
             return
@@ -56,7 +59,10 @@ extension MainVC: MainViewDelegate {
 //        guard let controller = storyboard.instantiateInitialViewController() else {fatalError()}
 //        controller.title = title
 //        navigationController?.pushViewController(controller, animated: true)
-        addBlurEffectViaZBuffer()
+        
+//        addBlurEffectViaZBuffer()
+        
+        addDepthToImage(imageName: testImageName3, imageExt: testImageExt3)
     }
     
     private func addBlurEffectViaZBuffer() {
@@ -92,30 +98,30 @@ extension MainVC: MainViewDelegate {
         
     }
     
-    private func addDepthToImage(imageName: String, extension: String) -> CGImageDestination? {
+    private func addDepthToImage(imageName: String, imageExt: String) -> CGImageDestination? {
         
-        guard let image = ImageLoader.loadImageFromBundle(imageName: testImageName1,
-                                                          fileExtension: testImageExt1), let cgImage = image.cgImage else {
+        guard let image = ImageLoader.loadImageFromBundle(imageName: imageName,
+                                                          fileExtension: imageExt) else {
             assertionFailure("Unable to load image")
             return nil
         }
         
-        let pixelBuffer = DepthReader.depthDataMap(imageName: testImageName1, imageExtension: testImageExt1)!
-        
-        let cfData = CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
-        let cfDictionary = [kCGImageAuxiliaryDataInfoData: cfData]
-        
-        guard let cfURL = Bundle.main.url(forResource: testImageName1, withExtension: testImageExt1) as CFURL? else {
+        guard let zImage = ImageLoader.loadImageFromBundle(imageName: bufferImageName, fileExtension: bufferImageExt), let cgImage = zImage.cgImage else {
             assertionFailure("Unable to locate image file")
             return nil
         }
         
-        guard let depthData = DepthReader.depthData(imageName: testImageName1, imageExtension: testImageExt1) else {
-            assertionFailure("Unable to get depth data")
+        let pixelBuffer = image.pixelBufferFromImage()
+        
+        let cfData = CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
+        let cfDictionary = [kCGImageAuxiliaryDataInfoData: cfData]
+        
+        guard let cfURL = Bundle.main.url(forResource: imageName, withExtension: imageExt) as CFURL? else {
+            assertionFailure("Unable to locate image file")
             return nil
         }
         
-        guard let fileData = ImageLoader.loadDataFromBundle(fileName: testImageName1, fileExtension: testImageExt1) else {
+        guard let fileData = ImageLoader.loadDataFromBundle(fileName: imageName, fileExtension: imageExt) else {
             assertionFailure("Unable to locate file")
             return nil
         }
@@ -134,6 +140,11 @@ extension MainVC: MainViewDelegate {
         CGImageDestinationAddImage(destination, cgImage, cfDictionary as CFDictionary)
         
         // Use AVDepthData to get the auxiliary data dictionary.
+        guard let depthData = DepthReader.depthData(imageName: imageName, imageExtension: imageExt) else {
+            assertionFailure("Unable to get depth data")
+            return nil
+        }
+        
         var auxDataType :NSString?
         let auxData = depthData.dictionaryRepresentation(forAuxiliaryDataType: &auxDataType)
         
