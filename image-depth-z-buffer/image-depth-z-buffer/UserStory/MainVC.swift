@@ -52,10 +52,44 @@ extension MainVC: MainViewDelegate {
     
     func didTapExportButton() {
         
-        let storyboard = UIStoryboard(name: "DepthFromCameraRoll", bundle: nil)
-        guard let controller = storyboard.instantiateInitialViewController() else {fatalError()}
-        controller.title = title
-        navigationController?.pushViewController(controller, animated: true)
+//        let storyboard = UIStoryboard(name: "DepthFromCameraRoll", bundle: nil)
+//        guard let controller = storyboard.instantiateInitialViewController() else {fatalError()}
+//        controller.title = title
+//        navigationController?.pushViewController(controller, animated: true)
+        addBlurEffectViaZBuffer()
+    }
+    
+    private func addBlurEffectViaZBuffer() {
+        
+        guard let mainURL = Bundle.main.url(forResource: "original_image", withExtension: "jpg") else {
+            assertionFailure("Unable to locate image file")
+            return
+        }
+        guard let dispURL = Bundle.main.url(forResource: "zbuffer", withExtension: "jpg") else {
+            assertionFailure("Unable to locate image file")
+            return
+        }
+        
+        let mainImage = CIImage(contentsOf: mainURL)
+        let disparityImage = CIImage(contentsOf: dispURL)
+        
+        let filter = CIFilter(name: "CIMaskedVariableBlur", parameters: [kCIInputImageKey: mainImage])
+        filter?.setValue(disparityImage, forKey: "inputMask")
+        filter?.setValue(30, forKey: "inputRadius")
+        
+        guard let resultImage = filter?.outputImage else {
+            assertionFailure("Unable to get output image")
+            return
+        }
+        
+        let context = CIContext() // Prepare for create CGImage
+        guard let cgImage = context.createCGImage(resultImage, from: resultImage.extent) else {
+            assertionFailure("Unable to create cg image")
+            return
+        }
+        let uiImage = UIImage(cgImage: cgImage)
+        UIImageWriteToSavedPhotosAlbum(uiImage, nil, nil, nil)
+        
     }
     
     private func addDepthToImage(imageName: String, extension: String) -> CGImageDestination? {
