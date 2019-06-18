@@ -11,7 +11,7 @@ import SnapKit
 
 protocol MainViewDelegate: class {
     
-    func didTapApplyButton() -> CGImageDestination?
+    func didTapApplyButton()
     func didTapExportButton()
 }
 

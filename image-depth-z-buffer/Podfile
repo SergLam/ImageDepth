@@ -6,4 +6,6 @@ target 'image-depth-z-buffer' do
 
   # Pods for image-depth-z-buffer
     pod 'SnapKit', '~> 5.0.0'
+    pod 'SwiftAssetsPickerController'
+    
 end

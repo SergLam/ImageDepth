@@ -8,6 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		2171F2BF85784E54D33D5EFB /* Pods_image_depth_z_buffer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9E7514FEC626DC76A28A8DD /* Pods_image_depth_z_buffer.framework */; };
+		7CCCBE3A22B8A65C0089552D /* PHAsset+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCCBE3922B8A65C0089552D /* PHAsset+Ext.swift */; };
+		7CCCBE3C22B8A6930089552D /* PHContentEditingInput+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCCBE3B22B8A6930089552D /* PHContentEditingInput+Ext.swift */; };
+		7CCCBE3E22B8A6DD0089552D /* CGImageSource+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCCBE3D22B8A6DD0089552D /* CGImageSource+Ext.swift */; };
+		7CCCBE4022B8A71C0089552D /* AVDepthData+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCCBE3F22B8A71C0089552D /* AVDepthData+Ext.swift */; };
+		7CCCBE4422B8B06D0089552D /* DepthFromCameraRollViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCCBE4222B8B06D0089552D /* DepthFromCameraRollViewController.swift */; };
+		7CCCBE4522B8B06D0089552D /* DepthFromCameraRoll.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7CCCBE4322B8B06D0089552D /* DepthFromCameraRoll.storyboard */; };
+		7CCCBE4822B8B2A10089552D /* image-with-depth.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7CCCBE4722B8B2A10089552D /* image-with-depth.jpg */; };
 		7CE2D62422B79AF7001AA193 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE2D62322B79AF7001AA193 /* AppDelegate.swift */; };
 		7CE2D62622B79AF7001AA193 /* MainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE2D62522B79AF7001AA193 /* MainVC.swift */; };
 		7CE2D62B22B79AF8001AA193 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7CE2D62A22B79AF8001AA193 /* Assets.xcassets */; };
@@ -32,6 +39,14 @@
 
 /* Begin PBXFileReference section */
 		4855286FA5F11C8FA0D1D147 /* Pods-image-depth-z-buffer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-image-depth-z-buffer.debug.xcconfig"; path = "Target Support Files/Pods-image-depth-z-buffer/Pods-image-depth-z-buffer.debug.xcconfig"; sourceTree = "<group>"; };
+		7CCCBE3922B8A65C0089552D /* PHAsset+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PHAsset+Ext.swift"; sourceTree = "<group>"; };
+		7CCCBE3B22B8A6930089552D /* PHContentEditingInput+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PHContentEditingInput+Ext.swift"; sourceTree = "<group>"; };
+		7CCCBE3D22B8A6DD0089552D /* CGImageSource+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGImageSource+Ext.swift"; sourceTree = "<group>"; };
+		7CCCBE3F22B8A71C0089552D /* AVDepthData+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVDepthData+Ext.swift"; sourceTree = "<group>"; };
+		7CCCBE4222B8B06D0089552D /* DepthFromCameraRollViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DepthFromCameraRollViewController.swift; sourceTree = "<group>"; };
+		7CCCBE4322B8B06D0089552D /* DepthFromCameraRoll.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = DepthFromCameraRoll.storyboard; sourceTree = "<group>"; };
+		7CCCBE4622B8B1260089552D /* image-depth-z-buffer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "image-depth-z-buffer-Bridging-Header.h"; sourceTree = "<group>"; };
+		7CCCBE4722B8B2A10089552D /* image-with-depth.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "image-with-depth.jpg"; sourceTree = "<group>"; };
 		7CE2D62022B79AF7001AA193 /* image-depth-z-buffer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "image-depth-z-buffer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CE2D62322B79AF7001AA193 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7CE2D62522B79AF7001AA193 /* MainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainVC.swift; sourceTree = "<group>"; };
@@ -79,6 +94,15 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		7CCCBE4122B8B06D0089552D /* Depth-from-Camera-Roll */ = {
+			isa = PBXGroup;
+			children = (
+				7CCCBE4222B8B06D0089552D /* DepthFromCameraRollViewController.swift */,
+				7CCCBE4322B8B06D0089552D /* DepthFromCameraRoll.storyboard */,
+			);
+			path = "Depth-from-Camera-Roll";
+			sourceTree = "<group>";
+		};
 		7CE2D61722B79AF7001AA193 = {
 			isa = PBXGroup;
 			children = (
@@ -112,6 +136,7 @@
 		7CE2D63522B79C4D001AA193 /* UserStory */ = {
 			isa = PBXGroup;
 			children = (
+				7CCCBE4122B8B06D0089552D /* Depth-from-Camera-Roll */,
 				7CE2D62522B79AF7001AA193 /* MainVC.swift */,
 				7CE2D63F22B7CAD1001AA193 /* MainView.swift */,
 			);
@@ -125,6 +150,7 @@
 				7CE2D62322B79AF7001AA193 /* AppDelegate.swift */,
 				7CE2D62F22B79AF8001AA193 /* Info.plist */,
 				7CE2D62A22B79AF8001AA193 /* Assets.xcassets */,
+				7CCCBE4622B8B1260089552D /* image-depth-z-buffer-Bridging-Header.h */,
 			);
 			path = BundleFiles;
 			sourceTree = "<group>";
@@ -132,6 +158,7 @@
 		7CE2D63722B7A061001AA193 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				7CCCBE4722B8B2A10089552D /* image-with-depth.jpg */,
 				7CE2D65022B80C93001AA193 /* realTest.jpeg */,
 				7CE2D64E22B80666001AA193 /* test.jpg */,
 				7CE2D63822B7A082001AA193 /* combine_image.jpg */,
@@ -161,6 +188,10 @@
 				7CE2D64622B7E5A0001AA193 /* CVPixelBuffer+Ext.swift */,
 				7CE2D64822B7EC1E001AA193 /* UIImage+Ext.swift */,
 				7CF54DE722B81FFE008A4337 /* URL+Ext.swift */,
+				7CCCBE3922B8A65C0089552D /* PHAsset+Ext.swift */,
+				7CCCBE3B22B8A6930089552D /* PHContentEditingInput+Ext.swift */,
+				7CCCBE3D22B8A6DD0089552D /* CGImageSource+Ext.swift */,
+				7CCCBE3F22B8A71C0089552D /* AVDepthData+Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -233,7 +264,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7CCCBE4522B8B06D0089552D /* DepthFromCameraRoll.storyboard in Resources */,
 				7CE2D63B22B7A0E5001AA193 /* original_image.jpg in Resources */,
+				7CCCBE4822B8B2A10089552D /* image-with-depth.jpg in Resources */,
 				7CE2D64F22B80666001AA193 /* test.jpg in Resources */,
 				7CE2D63922B7A082001AA193 /* combine_image.jpg in Resources */,
 				7CE2D62E22B79AF8001AA193 /* LaunchScreen.storyboard in Resources */,
@@ -255,13 +288,17 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-image-depth-z-buffer/Pods-image-depth-z-buffer-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/CheckMarkView/CheckMarkView.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftAssetsPickerController/SwiftAssetsPickerController.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CheckMarkView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftAssetsPickerController.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -302,13 +339,18 @@
 				7CE2D62622B79AF7001AA193 /* MainVC.swift in Sources */,
 				7CE2D64022B7CAD1001AA193 /* MainView.swift in Sources */,
 				7CE2D64422B7E2CC001AA193 /* DepthReader.swift in Sources */,
+				7CCCBE4022B8A71C0089552D /* AVDepthData+Ext.swift in Sources */,
 				7CE2D64D22B8044E001AA193 /* CGImage+Ext.swift in Sources */,
 				7CE2D64722B7E5A0001AA193 /* CVPixelBuffer+Ext.swift in Sources */,
 				7CE2D64C22B8044E001AA193 /* CIImage+Ext.swift in Sources */,
+				7CCCBE3A22B8A65C0089552D /* PHAsset+Ext.swift in Sources */,
+				7CCCBE4422B8B06D0089552D /* DepthFromCameraRollViewController.swift in Sources */,
 				7CF54DEA22B828CF008A4337 /* ImageSaver.swift in Sources */,
 				7CF54DE822B81FFE008A4337 /* URL+Ext.swift in Sources */,
 				7CE2D64222B7CE9E001AA193 /* ImageLoader.swift in Sources */,
+				7CCCBE3E22B8A6DD0089552D /* CGImageSource+Ext.swift in Sources */,
 				7CE2D62422B79AF7001AA193 /* AppDelegate.swift in Sources */,
+				7CCCBE3C22B8A6930089552D /* PHContentEditingInput+Ext.swift in Sources */,
 				7CF54DEC22B83070008A4337 /* AlertPresenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
