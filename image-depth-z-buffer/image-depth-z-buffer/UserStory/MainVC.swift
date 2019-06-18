@@ -40,9 +40,28 @@ class MainVC: UIViewController {
 
 extension MainVC: MainViewDelegate {
     
-    func didTapApplyButton() -> CGImageDestination? {
+    func didTapApplyButton() {
         
-        guard let image = ImageLoader.loadImageFromBundle(imageName: testImageName1, fileExtension: testImageExt1), let cgImage = image.cgImage else {
+        let _ = addDepthToImage(imageName: testImageName1, extension: testImageExt1)
+        guard let url = Bundle.main.url(forResource: testImageName1, withExtension: testImageExt1) else {
+            assertionFailure("Unable to locate image file")
+            return
+        }
+        ImageSaver.saveToPhotosLibrary(url)
+    }
+    
+    func didTapExportButton() {
+        
+        let storyboard = UIStoryboard(name: "DepthFromCameraRoll", bundle: nil)
+        guard let controller = storyboard.instantiateInitialViewController() else {fatalError()}
+        controller.title = title
+        navigationController?.pushViewController(controller, animated: true)
+    }
+    
+    private func addDepthToImage(imageName: String, extension: String) -> CGImageDestination? {
+        
+        guard let image = ImageLoader.loadImageFromBundle(imageName: testImageName1,
+                                                          fileExtension: testImageExt1), let cgImage = image.cgImage else {
             assertionFailure("Unable to load image")
             return nil
         }
@@ -94,11 +113,6 @@ extension MainVC: MainViewDelegate {
         } else {
             return nil
         }
-        
-    }
-    
-    func didTapExportButton() {
-        
     }
     
     
