@@ -106,14 +106,19 @@ extension MainVC: MainViewDelegate {
             return nil
         }
         
-        guard let zImage = ImageLoader.loadImageFromBundle(imageName: bufferImageName, fileExtension: bufferImageExt), let cgImage = zImage.cgImage else {
+        guard let zImage = ImageLoader.loadImageFromBundle(imageName: bufferImageName, fileExtension: bufferImageExt) else {
             assertionFailure("Unable to locate image file")
+            return nil
+        }
+        
+        guard let cgImage = zImage.cgImage, let ciZimage = CIImage(image: zImage) else {
+            assertionFailure("Unable to get images")
             return nil
         }
         
         let pixelBuffer = image.pixelBufferFromImage()
         
-        let cfData = CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
+        let cfData = CVPixelBufferLockBaseAddress(pixelBuffer.normalize(), .readOnly)
         let cfDictionary = [kCGImageAuxiliaryDataInfoData: cfData]
         
         guard let cfURL = Bundle.main.url(forResource: imageName, withExtension: imageExt) as CFURL? else {
@@ -140,16 +145,18 @@ extension MainVC: MainViewDelegate {
         CGImageDestinationAddImage(destination, cgImage, cfDictionary as CFDictionary)
         
         // Use AVDepthData to get the auxiliary data dictionary.
-        guard let depthData = DepthReader.depthData(imageName: imageName, imageExtension: imageExt) else {
-            assertionFailure("Unable to get depth data")
-            return nil
-        }
+        let ciContext = CIContext()
+        let auxData = [kCGImageAuxiliaryDataInfoData: ciContext.jpegRepresentation(of: ciZimage, colorSpace: CGColorSpace(name: CGColorSpace.linearGray)!, options: [:])]
+//        guard let depthData = DepthReader.depthData(imageName: imageName, imageExtension: imageExt) else {
+//            assertionFailure("Unable to get depth data")
+//            return nil
+//        }
         
-        var auxDataType :NSString?
-        let auxData = depthData.dictionaryRepresentation(forAuxiliaryDataType: &auxDataType)
+        let auxDataType: NSString = kCGImageAuxiliaryDataInfoData as NSString
+//        let auxData = depthData.dictionaryRepresentation(forAuxiliaryDataType: &auxDataType)
         
         // Add auxiliary data to the image destination.
-        CGImageDestinationAddAuxiliaryDataInfo(destination, auxDataType!, auxData! as CFDictionary)
+        CGImageDestinationAddAuxiliaryDataInfo(destination, auxDataType, auxData as CFDictionary)
         
         if CGImageDestinationFinalize(destination) {
             debugPrint(destination)
