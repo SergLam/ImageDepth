@@ -14,24 +14,28 @@ class ImageSaver {
     
     static func saveToPhotosLibrary(_ imageURL: URL) {
         
-        DispatchQueue.main.async {
+            DispatchQueue.main.async {
             
             PHPhotoLibrary.shared().performChanges({
+                
                 PHAssetCreationRequest.creationRequestForAssetFromImage(atFileURL: imageURL)
                 
             }, completionHandler: { (success, error) in
                 
-                guard let vc = UIApplication.topViewController() else {
-                    return
+                DispatchQueue.main.async {
+                    guard let vc = UIApplication.topViewController() else {
+                        return
+                    }
+                    guard let error = error else {
+                        AlertPresenter.showSuccessMessage(at: vc, message: "Image saved \(imageURL.lastPathComponent)")
+                        return
+                    }
+                    AlertPresenter.showError(at: vc, error: error.localizedDescription)
                 }
-                guard let error = error else {
-                    AlertPresenter.showSuccessMessage(at: vc, message: "Image saved \(imageURL.lastPathComponent)")
-                    return
-                }
-                AlertPresenter.showError(at: vc, error: error.localizedDescription)
+               
             })
+                
         }
-        
     }
     
 }
