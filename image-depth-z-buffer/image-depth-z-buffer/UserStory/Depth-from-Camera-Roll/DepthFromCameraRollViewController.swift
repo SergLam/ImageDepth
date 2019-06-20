@@ -21,10 +21,11 @@ class DepthFromCameraRollViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         //"image-with-depth"
+        //"original_image"
         PHPhotoLibrary.requestAuthorization({ status in
             switch status {
             case .authorized:
-                let url = Bundle.main.url(forResource: "original_image", withExtension: "jpg")!
+                let url = Bundle.main.url(forResource: "zbuffer", withExtension: "jpg")!
                 self.loadImage(at: url)
             default:
                 fatalError()

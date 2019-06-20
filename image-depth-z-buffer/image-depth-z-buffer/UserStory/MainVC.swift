@@ -22,6 +22,9 @@ class MainVC: UIViewController {
     private let testImageName3 = "original_image"
     private let testImageExt3 = "jpg"
     
+    private let bufferImageName = "zbuffer"
+    private let bufferImageExt = "jpg"
+    
     let contentView = MainView()
     
     override func loadView() {
@@ -42,46 +45,85 @@ extension MainVC: MainViewDelegate {
     
     func didTapApplyButton() {
         
-        let _ = addDepthToImage(imageName: testImageName1, extension: testImageExt1)
-        guard let url = Bundle.main.url(forResource: testImageName1, withExtension: testImageExt1) else {
-            assertionFailure("Unable to locate image file")
-            return
-        }
-        ImageSaver.saveToPhotosLibrary(url)
+//        let _ = addDepthToImage(imageName: testImageName3, imageExt: testImageExt3)
+//        guard let url = Bundle.main.url(forResource: testImageName1, withExtension: testImageExt1) else {
+//            assertionFailure("Unable to locate image file")
+//            return
+//        }
+//        ImageSaver.saveToPhotosLibrary(url)
     }
     
     func didTapExportButton() {
         
-        let storyboard = UIStoryboard(name: "DepthFromCameraRoll", bundle: nil)
-        guard let controller = storyboard.instantiateInitialViewController() else {fatalError()}
-        controller.title = title
-        navigationController?.pushViewController(controller, animated: true)
+//        let storyboard = UIStoryboard(name: "DepthFromCameraRoll", bundle: nil)
+//        guard let controller = storyboard.instantiateInitialViewController() else {fatalError()}
+//        controller.title = title
+//        navigationController?.pushViewController(controller, animated: true)
+        
+//        addBlurEffectViaZBuffer()
+        
+        addDepthToImage(imageName: testImageName3, imageExt: testImageExt3)
     }
     
-    private func addDepthToImage(imageName: String, extension: String) -> CGImageDestination? {
+    private func addBlurEffectViaZBuffer() {
         
-        guard let image = ImageLoader.loadImageFromBundle(imageName: testImageName1,
-                                                          fileExtension: testImageExt1), let cgImage = image.cgImage else {
+        guard let mainURL = Bundle.main.url(forResource: "original_image", withExtension: "jpg") else {
+            assertionFailure("Unable to locate image file")
+            return
+        }
+        guard let dispURL = Bundle.main.url(forResource: "zbuffer", withExtension: "jpg") else {
+            assertionFailure("Unable to locate image file")
+            return
+        }
+        
+        let mainImage = CIImage(contentsOf: mainURL)
+        let disparityImage = CIImage(contentsOf: dispURL)
+        
+        let filter = CIFilter(name: "CIMaskedVariableBlur", parameters: [kCIInputImageKey: mainImage])
+        filter?.setValue(disparityImage, forKey: "inputMask")
+        filter?.setValue(30, forKey: "inputRadius")
+        
+        guard let resultImage = filter?.outputImage else {
+            assertionFailure("Unable to get output image")
+            return
+        }
+        
+        let context = CIContext() // Prepare for create CGImage
+        guard let cgImage = context.createCGImage(resultImage, from: resultImage.extent) else {
+            assertionFailure("Unable to create cg image")
+            return
+        }
+        let uiImage = UIImage(cgImage: cgImage)
+        UIImageWriteToSavedPhotosAlbum(uiImage, nil, nil, nil)
+        
+    }
+    
+    private func addDepthToImage(imageName: String, imageExt: String) -> CGImageDestination? {
+        
+        guard let image = ImageLoader.loadImageFromBundle(imageName: imageName,
+                                                          fileExtension: imageExt) else {
             assertionFailure("Unable to load image")
             return nil
         }
         
-        let pixelBuffer = DepthReader.depthDataMap(imageName: testImageName1, imageExtension: testImageExt1)!
-        
-        let cfData = CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
-        let cfDictionary = [kCGImageAuxiliaryDataInfoData: cfData]
-        
-        guard let cfURL = Bundle.main.url(forResource: testImageName1, withExtension: testImageExt1) as CFURL? else {
+        guard let zImage = ImageLoader.loadImageFromBundle(imageName: bufferImageName, fileExtension: bufferImageExt) else {
             assertionFailure("Unable to locate image file")
             return nil
         }
         
-        guard let depthData = DepthReader.depthData(imageName: testImageName1, imageExtension: testImageExt1) else {
-            assertionFailure("Unable to get depth data")
+  
+        
+        let pixelBuffer = image.pixelBufferFromImage()
+        
+        let cfData = CVPixelBufferLockBaseAddress(pixelBuffer.normalize(), .readOnly)
+        let cfDictionary = [kCGImageAuxiliaryDataInfoData: cfData]
+        
+        guard let cfURL = Bundle.main.url(forResource: imageName, withExtension: imageExt) as CFURL? else {
+            assertionFailure("Unable to locate image file")
             return nil
         }
         
-        guard let fileData = ImageLoader.loadDataFromBundle(fileName: testImageName1, fileExtension: testImageExt1) else {
+        guard let fileData = ImageLoader.loadDataFromBundle(fileName: imageName, fileExtension: imageExt) else {
             assertionFailure("Unable to locate file")
             return nil
         }
@@ -96,18 +138,46 @@ extension MainVC: MainViewDelegate {
             return nil
         }
         
+        guard let cgImage = zImage.cgImage, let ciZimage = CIImage(image: zImage) else {
+            assertionFailure("Unable to get images")
+            return nil
+        }
+        
         // Add an image to the destination.
         CGImageDestinationAddImage(destination, cgImage, cfDictionary as CFDictionary)
         
         // Use AVDepthData to get the auxiliary data dictionary.
-        var auxDataType :NSString?
-        let auxData = depthData.dictionaryRepresentation(forAuxiliaryDataType: &auxDataType)
+        let ciContext = CIContext()
+        // InfoData
+        let zImageData = ciContext.jpegRepresentation(of: ciZimage, colorSpace: CGColorSpaceCreateDeviceRGB(), options: [:])
+        // InfoDataDescription
+        let zBuffer = zImage.pixelBufferFromImage()
+        
+        let zImageDataDescription = [ kCGImagePropertyPixelFormat: CVPixelBufferGetPixelFormatType(zBuffer),
+                                     kCGImagePropertyWidth: CVPixelBufferGetWidth(zBuffer),
+                                     kCGImagePropertyHeight: CVPixelBufferGetHeight(zBuffer),
+                                     kCGImagePropertyBytesPerRow: CVPixelBufferGetBytesPerRow(zBuffer)
+            ] as [CFString : Any]
+        // Metadata
+        let provider = CGDataProvider(data: zImage.jpegData(compressionQuality: 1)! as CFData)!
+        let source: CGImageSource = CGImageSourceCreateWithDataProvider(provider, nil)!
+        let metadata: CGImageMetadata = CGImageSourceCopyMetadataAtIndex(source, 0, nil)!
+        
+        let auxData = [kCGImageAuxiliaryDataInfoData: zImageData,
+                       kCGImageAuxiliaryDataInfoDataDescription: zImageDataDescription,
+                       kCGImageAuxiliaryDataInfoMetadata: metadata] as [CFString : Any]
+//        guard let depthData = DepthReader.depthData(imageName: imageName, imageExtension: imageExt) else {
+//            assertionFailure("Unable to get depth data")
+//            return nil
+//        }
+        
+        let auxDataType: NSString = kCGImageAuxiliaryDataTypeDepth as NSString
+//        let auxData = depthData.dictionaryRepresentation(forAuxiliaryDataType: &auxDataType)
         
         // Add auxiliary data to the image destination.
-        CGImageDestinationAddAuxiliaryDataInfo(destination, auxDataType!, auxData! as CFDictionary)
+        CGImageDestinationAddAuxiliaryDataInfo(destination, auxDataType, auxData as CFDictionary)
         
         if CGImageDestinationFinalize(destination) {
-            debugPrint(destination)
             ImageSaver.saveToPhotosLibrary(cfURL as URL)
             return destination
         } else {

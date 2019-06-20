@@ -11,7 +11,7 @@ import AVFoundation
 
 extension CVPixelBuffer {
     
-    func normalize() {
+    func normalize() -> CVPixelBuffer {
         
         let width = CVPixelBufferGetWidth(self)
         let height = CVPixelBufferGetHeight(self)
@@ -40,6 +40,7 @@ extension CVPixelBuffer {
         }
         
         CVPixelBufferUnlockBaseAddress(self, CVPixelBufferLockFlags(rawValue: 0))
+        return self
     }
     
     func printDebugInfo() {
