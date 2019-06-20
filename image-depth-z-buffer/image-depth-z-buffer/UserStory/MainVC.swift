@@ -101,7 +101,7 @@ extension MainVC: MainViewDelegate {
     private func addDepthToImage(imageName: String, imageExt: String) -> CGImageDestination? {
         
         guard let image = ImageLoader.loadImageFromBundle(imageName: imageName,
-                                                          fileExtension: imageExt), let ciImage = CIImage(image: image) else {
+                                                          fileExtension: imageExt), let ciImage = CIImage(image: image), let origCgImage = image.cgImage else {
             assertionFailure("Unable to load image")
             return nil
         }
@@ -174,14 +174,18 @@ extension MainVC: MainViewDelegate {
         // Add auxiliary data to the image destination.
         CGImageDestinationAddAuxiliaryDataInfo(destination, auxDataType, auxData as CFDictionary)
 
-        if CGImageDestinationFinalize(destination) {
-            ImageSaver.saveToPhotosLibrary(cfURL as URL)
-            return destination
-        } else {
-            return nil
-        }
+        // saveAsHeif(ciImage: ciImage, url: cfURL as URL)
+        ImageSaver.saveHeifImage(origCgImage)
+        return nil
+//        if CGImageDestinationFinalize(destination) {
+//            ImageSaver.saveToPhotosLibrary(cfURL as URL)
+//            return destination
+//        } else {
+//            return nil
+//        }
+        
+        
     }
-    
     
 }
 

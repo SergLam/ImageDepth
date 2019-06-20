@@ -38,4 +38,41 @@ class ImageSaver {
         }
     }
     
+    static func saveHeifImage(_ cgImage: CGImage) {
+        
+        let docsurl = try! FileManager.default.url(for:.documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+        
+        let url = docsurl.appendingPathComponent("output.HEIC")
+        
+        guard let destination = CGImageDestinationCreateWithURL(url as CFURL, AVFileType.heic as CFString, 1, nil) else {
+            assertionFailure("unable to create CGImageDestination")
+            return
+        }
+        
+        CGImageDestinationAddImage(destination, cgImage, nil)
+        
+        if (CGImageDestinationFinalize(destination)) {
+            
+            PHPhotoLibrary.shared().performChanges({
+                
+                let create : PHAssetCreationRequest = PHAssetCreationRequest.forAsset()
+                
+                create.addResource(with:.photo , fileURL: url, options: nil)
+                
+            }, completionHandler: { (success, error) in
+                
+                guard let vc = UIApplication.topViewController() else {
+                    return
+                }
+                guard let error = error else {
+                    AlertPresenter.showSuccessMessage(at: vc, message: "Image saved \(url.absoluteString)")
+                    return
+                }
+                AlertPresenter.showError(at: vc, error: error.localizedDescription)
+                
+            })
+            
+        }
+    }
+    
 }
