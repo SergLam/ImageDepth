@@ -11,7 +11,7 @@ import AVFoundation
 import ImageIO
 import MobileCoreServices
 
-class MainVC: UIViewController {
+final class MainVC: UIViewController {
     
     private let testImageName1 = "test"
     private let testImageExt1 = "jpg"

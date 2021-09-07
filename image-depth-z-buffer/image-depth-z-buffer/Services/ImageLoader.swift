@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ImageLoader {
+final class ImageLoader {
     
     static func loadImageFromBundle(imageName: String, fileExtension: String) -> UIImage? {
         

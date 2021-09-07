@@ -9,7 +9,7 @@ DEPENDENCIES:
   - SwiftAssetsPickerController
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - CheckMarkView
     - SnapKit
     - SwiftAssetsPickerController
@@ -19,6 +19,6 @@ SPEC CHECKSUMS:
   SnapKit: fd22d10eb9aff484d79a8724eab922c1ddf89bcf
   SwiftAssetsPickerController: c1e8da8cc4a770afce9eff9668161d63499d38f9
 
-PODFILE CHECKSUM: 05a366383b9049d6d33221138fc5e5c8f7df4190
+PODFILE CHECKSUM: c0e21ad91b35b3e2b978281f1b3b990fd551a569
 
-COCOAPODS: 1.7.2
+COCOAPODS: 1.10.2

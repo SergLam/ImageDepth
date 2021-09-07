@@ -9,13 +9,13 @@
 import UIKit
 import SnapKit
 
-protocol MainViewDelegate: class {
+protocol MainViewDelegate: AnyObject {
     
     func didTapApplyButton()
     func didTapExportButton()
 }
 
-class MainView: UIView {
+final class MainView: UIView {
     
     weak var delegate: MainViewDelegate?
     

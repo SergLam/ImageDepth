@@ -9,8 +9,9 @@
 import Foundation
 import AVFoundation
 import Photos
+import UIKit
 
-class ImageSaver {
+final class ImageSaver {
     
     static func saveToPhotosLibrary(_ imageURL: URL) {
         

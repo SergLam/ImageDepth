@@ -9,10 +9,10 @@ import UIKit
 import Photos
 import SwiftAssetsPickerController
 
-class DepthFromCameraRollViewController: UIViewController {
+final class DepthFromCameraRollViewController: UIViewController {
 
-    @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var typeSegmentedCtl: UISegmentedControl!
+    @IBOutlet private weak var imageView: UIImageView!
+    @IBOutlet private weak var typeSegmentedCtl: UISegmentedControl!
 
     private var image: UIImage?
     private var disparityPixelBuffer: CVPixelBuffer?
