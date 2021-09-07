@@ -11,7 +11,7 @@ import AVFoundation
 import ImageIO
 import MobileCoreServices
 
-class MainVC: UIViewController {
+final class MainVC: UIViewController {
     
     private let testImageName1 = "test"
     private let testImageExt1 = "jpg"
@@ -62,7 +62,7 @@ extension MainVC: MainViewDelegate {
         
 //        addBlurEffectViaZBuffer()
         
-        addDepthToImage(imageName: testImageName3, imageExt: testImageExt3)
+        addDepthToImage(imageName: testImageName1, imageExt: testImageExt1)
     }
     
     private func addBlurEffectViaZBuffer() {
@@ -101,7 +101,7 @@ extension MainVC: MainViewDelegate {
     private func addDepthToImage(imageName: String, imageExt: String) -> CGImageDestination? {
         
         guard let image = ImageLoader.loadImageFromBundle(imageName: imageName,
-                                                          fileExtension: imageExt) else {
+                                                          fileExtension: imageExt), let ciImage = CIImage(image: image), let origCgImage = image.cgImage else {
             assertionFailure("Unable to load image")
             return nil
         }
@@ -122,12 +122,13 @@ extension MainVC: MainViewDelegate {
             assertionFailure("Unable to locate image file")
             return nil
         }
-        
+//        ImageSaver.saveToPhotosLibrary(cfURL as URL)
+//        return nil
         guard let fileData = ImageLoader.loadDataFromBundle(fileName: imageName, fileExtension: imageExt) else {
             assertionFailure("Unable to locate file")
             return nil
         }
-        
+
         let bytes = [UInt8](fileData)
         guard let cfData1 = CFDataCreateMutable(kCFAllocatorDefault, bytes.count) else {
             assertionFailure("Unable to create mutable data")
@@ -137,22 +138,22 @@ extension MainVC: MainViewDelegate {
             assertionFailure("Unable to create image destination \(cfURL)")
             return nil
         }
-        
+
         guard let cgImage = zImage.cgImage, let ciZimage = CIImage(image: zImage) else {
             assertionFailure("Unable to get images")
             return nil
         }
-        
+
         // Add an image to the destination.
         CGImageDestinationAddImage(destination, cgImage, cfDictionary as CFDictionary)
-        
+
         // Use AVDepthData to get the auxiliary data dictionary.
         let ciContext = CIContext()
         // InfoData
-        let zImageData = ciContext.jpegRepresentation(of: ciZimage, colorSpace: CGColorSpaceCreateDeviceRGB(), options: [:])
+        let zImageData = ciContext.jpegRepresentation(of: ciZimage, colorSpace: CGColorSpaceCreateDeviceRGB(), options: [.avDepthData: ciZimage])
         // InfoDataDescription
         let zBuffer = zImage.pixelBufferFromImage()
-        
+
         let zImageDataDescription = [ kCGImagePropertyPixelFormat: CVPixelBufferGetPixelFormatType(zBuffer),
                                      kCGImagePropertyWidth: CVPixelBufferGetWidth(zBuffer),
                                      kCGImagePropertyHeight: CVPixelBufferGetHeight(zBuffer),
@@ -162,29 +163,29 @@ extension MainVC: MainViewDelegate {
         let provider = CGDataProvider(data: zImage.jpegData(compressionQuality: 1)! as CFData)!
         let source: CGImageSource = CGImageSourceCreateWithDataProvider(provider, nil)!
         let metadata: CGImageMetadata = CGImageSourceCopyMetadataAtIndex(source, 0, nil)!
-        
-        let auxData = [kCGImageAuxiliaryDataInfoData: zImageData,
+
+        let auxData = [kCGImageAuxiliaryDataInfoData: zImageData!,
                        kCGImageAuxiliaryDataInfoDataDescription: zImageDataDescription,
                        kCGImageAuxiliaryDataInfoMetadata: metadata] as [CFString : Any]
-//        guard let depthData = DepthReader.depthData(imageName: imageName, imageExtension: imageExt) else {
-//            assertionFailure("Unable to get depth data")
+
+
+        let auxDataType: NSString = kCGImageAuxiliaryDataTypePortraitEffectsMatte as NSString
+
+        // Add auxiliary data to the image destination.
+        CGImageDestinationAddAuxiliaryDataInfo(destination, auxDataType, auxData as CFDictionary)
+
+        // saveAsHeif(ciImage: ciImage, url: cfURL as URL)
+        ImageSaver.saveHeifImage(origCgImage)
+        return nil
+//        if CGImageDestinationFinalize(destination) {
+//            ImageSaver.saveToPhotosLibrary(cfURL as URL)
+//            return destination
+//        } else {
 //            return nil
 //        }
         
-        let auxDataType: NSString = kCGImageAuxiliaryDataTypeDepth as NSString
-//        let auxData = depthData.dictionaryRepresentation(forAuxiliaryDataType: &auxDataType)
         
-        // Add auxiliary data to the image destination.
-        CGImageDestinationAddAuxiliaryDataInfo(destination, auxDataType, auxData as CFDictionary)
-        
-        if CGImageDestinationFinalize(destination) {
-            ImageSaver.saveToPhotosLibrary(cfURL as URL)
-            return destination
-        } else {
-            return nil
-        }
     }
-    
     
 }
 

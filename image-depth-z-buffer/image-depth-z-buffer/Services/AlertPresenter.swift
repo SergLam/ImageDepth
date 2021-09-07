@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AlertPresenter {
+final class AlertPresenter {
     
     static func showError(at vc: UIViewController, error: String) {
         

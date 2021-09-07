@@ -9,7 +9,7 @@
 import UIKit
 import AVFoundation
 
-class DepthReader {
+final class DepthReader {
     
     static func depthData(imageName: String, imageExtension: String) -> AVDepthData? {
         
